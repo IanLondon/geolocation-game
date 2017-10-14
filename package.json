@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "standard",
-    "build": "webpack",
+    "build": "npm run lint && webpack -p && cp index.html dist/",
+    "deploy:gh-pages": "npm run build && ./deploy-gh-pages.sh",
     "start": "webpack-dev-server --hot --host 0.0.0.0"
   },
   "author": "Ian London",
