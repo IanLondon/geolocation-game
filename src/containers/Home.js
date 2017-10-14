@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Howl } from 'howler'
+import exampSound from '../../sounds/church-bell-large.mp3'
 // require('webrtc-adapter') // webrtc adapter.js
 
 class GeolocationExamp extends React.Component {
@@ -129,8 +131,60 @@ class CameraStream extends React.Component {
   }
 }
 
+class LoopingSound extends React.Component {
+  constructor (props) {
+    super(props)
+    this.sound = null
+    this.state = {gapTimeMillis: props.initialGapTime || 0}
+  }
+
+  componentWillMount () {
+    console.log({exampSound})
+    const sound = new Howl({
+      src: [exampSound]
+    })
+    sound.on('load', () => console.log('loaded sound'))
+    sound.on('play', () => console.log('play sound'))
+    sound.on('stop', () => console.log('stop sound'))
+    sound.on('end', () => console.log('end sound'))
+    this.sound = sound
+  }
+
+  updateVolume ({rate, volume, fadeTimeMillis = 100}) {
+    fadeTimeMillis
+      ? this.sound.fade(this.sound.volume(), volume, fadeTimeMillis)
+      : this.sound.volume(volume)
+    rate !== undefined &&
+      this.sound.rate(rate)
+  }
+
+  playWithLoopGap () {
+    const duration = this.sound.duration()
+    this.sound.loop(false)
+    this.sound.on(
+      'end', () => setTimeout(() => this.sound.play(), duration + this.state.gapTimeMillis)
+    )
+    !this.sound.playing() && this.sound.play()
+  }
+
+  render () {
+    return (
+      <div>
+        <button onClick={e => this.playWithLoopGap(500)}>Play Sound</button>
+        <button onClick={e => {
+          this.sound.off('end')
+        }}>
+          Stop Looping
+        </button>
+        <cite>Sound effects obtained from https://www.zapsplat.com</cite>
+      </div>
+    )
+  }
+}
+
 const Home = () => (
   <div>
+    <LoopingSound initialGapTime={1000} />
     🗺<GeolocationExamp />
     <CameraStream />
     <p>You can go to the <Link to='/about'>About</Link> page</p>

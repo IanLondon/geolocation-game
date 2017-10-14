@@ -33,6 +33,10 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.(gif|jpg|png|mp3|aac|ogg)$/,
+        loader: 'file-loader'
       }
     ]
   },
