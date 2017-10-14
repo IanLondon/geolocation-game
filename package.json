@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "standard",
     "build": "webpack",
-    "start": "webpack-dev-server --hot"
+    "start": "webpack-dev-server --hot --host 0.0.0.0"
   },
   "author": "Ian London",
   "license": "UNLICENSED",
