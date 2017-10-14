@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+// require('webrtc-adapter') // webrtc adapter.js
 
 class GeolocationExamp extends React.Component {
   constructor (props) {
@@ -49,52 +50,66 @@ class CameraStream extends React.Component {
     this.state = {
       audioDevices: null,
       videoDevices: null,
-      selectedVideoDevice: null
+      cameraFacingMode: 'environment'
     }
+    this.videoStream = null
+    this.videoElement = null
   }
 
   componentWillMount () {
+    // Get permissions for all video devices (no constraints)
     this.updateVideoDevices()
   }
 
-  selectNextVideoDevice () {
-    const { videoDevices, selectedVideoDevice } = this.state
-    // Go to next, looping back
+  componentWillUnmount () {
+    this.stopTracks()
+  }
+
+  stopTracks () {
+    this.videoStream && this.videoStream.getTracks().forEach(track => track.stop())
+  }
+
+  toggleCameraFacingMode () {
     this.setState({
-      selectedVideoDevice: videoDevices[(videoDevices.findIndex(d => d.deviceId === selectedVideoDevice) + 1) % videoDevices.length]
-    }, this.updateVideoStream)
+      cameraFacingMode: (this.state.cameraFacingMode === 'environment')
+        ? 'user'
+        : 'environment'
+    }, this.updateVideoDevices)
   }
 
   updateVideoDevices () {
     navigator.mediaDevices.enumerateDevices().then(deviceInfoArray => {
-      const videoDevices = deviceInfoArray.filter(device => device.kind === 'videoinput')
       return this.setState({
         audioDevices: deviceInfoArray.filter(device => device.kind === 'audioinput'),
-        videoDevices,
-        selectedVideoDevice: videoDevices[0]
+        videoDevices: deviceInfoArray.filter(device => device.kind === 'videoinput')
       }, this.updateVideoStream)
     })
   }
 
   updateVideoStream () {
-    const { selectedVideoDevice } = this.state
-    navigator.mediaDevices.getUserMedia({
+    const { cameraFacingMode, videoDevices } = this.state
+
+    // First, stop all tracks on videoStream
+    this.stopTracks()
+
+    const videoDeviceId = videoDevices[(cameraFacingMode === 'environment' && videoDevices.length > 1) ? 1 : 0].deviceId
+
+    const options = {
       audio: false,
-      video: (selectedVideoDevice)
-      ? true
-      : {
-        optional: [{ sourceId: this.state.videoDevices.map(d => d.deviceId)[1] }]
-      }
-    })
+      video: { optional: [{sourceId: videoDeviceId}] }
+    }
+
+    navigator.mediaDevices.getUserMedia(options)
       .then(stream => {
         // Update the <video> el's stream
+        this.videoStream = stream
         this.videoElement.srcObject = stream
       })
       .catch(err => {
         if (err.name === 'PermissionDeniedError') {
           window.alert('Permission denied, do something...')
         } else {
-          window.alert('Unhanded Error: "' + err.name + '" ' + err.message)
+          window.alert('Unhanded error while updating video stream: "' + err.name + '" ' + err.message)
           throw err
         }
       })
@@ -103,9 +118,9 @@ class CameraStream extends React.Component {
   render () {
     return (
       <div>
-        <button onClick={e => this.selectNextVideoDevice}>Next Video Device</button>
+        <button onClick={e => this.toggleCameraFacingMode()}>Next Video Device!</button>
         <img style={{position: 'absolute'}} src='https://i.stack.imgur.com/JgHWH.gif' />
-        <video ref={ref => { this.videoElement = ref }} muted autoPlay />
+        <video ref={ref => { this.videoElement = ref }} />
         <p>
           Devices: {JSON.stringify(this.state)}
         </p>
