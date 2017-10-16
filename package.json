@@ -1,14 +1,14 @@
 {
-  "name": "boilerplate",
+  "name": "geolocation-game",
   "version": "1.0.0",
-  "description": "Boilerplate: React hot reloading with css modules and standard linter",
+  "description": "Geolocation game framework",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "standard",
     "build": "npm run lint && webpack -p && cp index.html dist/",
     "deploy:gh-pages": "npm run build && ./deploy-gh-pages.sh",
-    "start": "webpack-dev-server --hot --host 0.0.0.0"
+    "start": "webpack-dev-server --hot"
   },
   "author": "Ian London",
   "license": "UNLICENSED",
@@ -20,6 +20,7 @@
     "lodash": "^4.17.4",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-google-maps": "^9.0.0",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.1.1",
     "redux": "^3.7.2",

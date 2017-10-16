@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Howl } from 'howler'
+import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-maps'
 import exampSound from '../../sounds/church-bell-large.mp3'
 // require('webrtc-adapter') // webrtc adapter.js
 
@@ -28,10 +29,7 @@ class GeolocationExamp extends React.Component {
 
   componentWillMount () {
     this.positionWatchId = navigator.geolocation.watchPosition(
-      position => {
-        this.updatePosition(position)
-        console.log(position)
-      },
+      position => this.updatePosition(position),
       err => console.error('watchPosition error:', err))
   }
 
@@ -182,11 +180,59 @@ class LoopingSound extends React.Component {
   }
 }
 
+class Map extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = { initialPosition: {} }
+  }
+
+  componentWillMount () {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        console.log('map initial pos', pos)
+        this.setState({
+          initialPosition: {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude
+          }
+        })
+      },
+      err => console.error('Map initial position error:', err)
+    )
+  }
+
+  render () {
+    const { initialPosition } = this.state
+    if (!('lat' in initialPosition)) {
+      return <div>Getting initial position for map...</div>
+    }
+
+    const MyMap = (
+      withScriptjs(withGoogleMap((props) =>
+        <GoogleMap
+          defaultZoom={16}
+          defaultCenter={initialPosition}
+        >
+          <Marker position={initialPosition} />
+        </GoogleMap>
+      ))
+    )
+
+    return <MyMap
+      googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAPS_API_KEY}`}
+      loadingElement={<div style={{height: '400px'}}>Loading!</div>}
+      containerElement={<div style={{ height: '400px', width: '100%', backgroundColor: 'pink' }} />}
+      mapElement={<div style={{ height: '100%' }} />}
+    />
+  }
+}
+
 const Home = () => (
   <div>
     <LoopingSound initialGapTime={1000} />
     🗺<GeolocationExamp />
     <CameraStream />
+    <Map />
     <p>You can go to the <Link to='/about'>About</Link> page</p>
 
   </div>
