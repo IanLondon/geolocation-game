@@ -12,7 +12,7 @@ const permissions = handleActions({
 }, {
   haveInitialLocation: undefined,
   cameraPermission: undefined,
-  soundsLoaded: undefined
+  soundsLoaded: true // TODO
 })
 
 const rootReducer = combineReducers({

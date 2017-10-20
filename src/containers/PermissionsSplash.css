@@ -1,10 +1,26 @@
-.permissionsSplash section {
+.permissionsSplash {
   background-color: lightgray;
-  display: flex;
   width: 20%;
   margin: auto;
   padding: 0.5rem 1.5rem;
+}
+
+.permissionsSplash section {
+  display: flex;
   justify-content: space-between;
+}
+
+.permissionsSplash button {
+  width: 100%;
+  border: 0;
+  color: purple;
+  background-color: darkgray;
+  cursor: pointer;
+}
+
+.permissionsSplash button:hover {
+  background-color: gray;
+  color: white;
 }
 
 .labelText {

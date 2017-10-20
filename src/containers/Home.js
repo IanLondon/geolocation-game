@@ -7,7 +7,9 @@ import PermissionsRequester from '../containers/PermissionsRequester.js'
 const Home = () => (
   <div>
     <PermissionsRequester />
-    <PermissionsSplash />
+    <PermissionsSplash>
+      <div>Content after loading here</div>
+    </PermissionsSplash>
     <p>You can go to the <Link to='/about'>About</Link> page</p>
 
   </div>

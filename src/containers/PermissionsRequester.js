@@ -19,7 +19,7 @@ export class PermissionsRequester extends React.Component {
           lng: pos.coords.longitude
         })
       },
-      err => reportPosition(err)
+      err => reportPosition(new Error(err.message)) // err is a funky PositionError obj
     )
 
     // Camera permission
