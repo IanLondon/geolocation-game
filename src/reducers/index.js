@@ -3,18 +3,26 @@ import { handleActions } from 'redux-actions'
 
 // REDUCERS
 
-const reducerExample = handleActions({
-  EXAMPLE_ACTION: (state, action) => state
-}, {})
+const permissions = handleActions({
+  REPORT_CAMERA_PERMISSIONS: (state, action) => ({...state, cameraPermission: action.payload}),
+  REPORT_POSITION: (state, action) => state.haveInitialLocation
+    ? state // ignore future position updates
+    : ({...state, haveInitialLocation: !!(action.payload.lat && action.payload.lng)})
+  // TODO LATER: sounds loaded
+}, {
+  haveInitialLocation: undefined,
+  cameraPermission: undefined,
+  soundsLoaded: undefined
+})
 
 const rootReducer = combineReducers({
-  reducerExample
+  permissions
 })
 
 // SELECTORS
 
 export const selectors = {
-  exampleSelector: state => state.default.reducerExample
+  permissions: state => state.default.permissions
 }
 
 export default rootReducer

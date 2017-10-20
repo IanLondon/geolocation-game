@@ -1,0 +1,24 @@
+.permissionsSplash section {
+  background-color: lightgray;
+  display: flex;
+  width: 20%;
+  margin: auto;
+  padding: 0.5rem 1.5rem;
+  justify-content: space-between;
+}
+
+.labelText {
+  color: gray;
+}
+
+.status {
+  color: gray;
+}
+
+.valid {
+  color: green;
+}
+
+.invalid {
+  color: darkred;
+}

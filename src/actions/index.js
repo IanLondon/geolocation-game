@@ -1,7 +1,9 @@
 import { createActions } from 'redux-actions'
 
 export const {
- exampleAction
-} = createActions({
-  EXAMPLE_ACTION: undefined
-})
+  reportCameraPermissions,
+  reportPosition
+} = createActions(
+  'REPORT_CAMERA_PERMISSIONS',
+  'REPORT_POSITION'
+)
